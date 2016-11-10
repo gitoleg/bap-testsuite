@@ -1,5 +1,4 @@
 language: c
-script: bash -ex .bap_install.sh
 sudo: false
 cache:
   directories:
