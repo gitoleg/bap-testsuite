@@ -1,11 +1,10 @@
 language: c
 script: bash -ex .bap_install.sh
-sudo: false
+sudo: true
 cache:
   directories:
     - $HOME/.opam
   before_cache:
-    - opam remove bap -y
     - rm -rf $HOME/.opam/log
 after_success:
   - make check
