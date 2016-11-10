@@ -1,12 +1,6 @@
 language: c
 sudo: false
-cache:
-  directories:
-    - $HOME/.opam
-  before_cache:
-    - opam remove bap -y
-    - opam pin remove bap
-    - rm -rf $HOME/.opam/log
+before_install: bash -ex .travis-opam.sh
 install: bash -ex .bap_install.sh
 addons:
   apt:
