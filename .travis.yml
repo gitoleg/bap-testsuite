@@ -1,11 +1,12 @@
 language: c
-before_install: bash -ex .travis-opam.sh
+script: bash -ex .bap_install.sh
 sudo: false
 cache:
   directories:
     - $HOME/.opam
   before_cache:
     - opam remove bap -y
+    - opam pin remove bap
     - rm -rf $HOME/.opam/log
 install: bash -ex .bap_install.sh
 addons:
@@ -33,7 +34,7 @@ addons:
     - time
     - aspcud
     - dejagnu
-script:
+after_script:
   - make check
 
 env:
