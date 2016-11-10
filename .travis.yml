@@ -1,13 +1,13 @@
 language: c
-script: bash -ex .bap_install.sh
+script: bash -ex .travis-opam.sh
 sudo: true
 cache:
   directories:
     - $HOME/.opam
   before_cache:
+    - opam remove bap -y
     - rm -rf $HOME/.opam/log
-after_success:
-  - make check
+script: bash -ex .bap_install.sh
 addons:
   apt:
     sources:
@@ -33,6 +33,8 @@ addons:
     - time
     - aspcud
     - dejagnu
+after_success:
+  - make check
 
 env:
   - FORK_USER=talex5 FORK_BRANCH=containers OPAMYES=true PACKAGE=bap OCAML_VERSION=latest TESTS=false
