@@ -1,5 +1,5 @@
 language: c
-script: bash -ex .travis-opam.sh
+before_script: bash -ex .travis-opam.sh
 sudo: true
 cache:
   directories:
