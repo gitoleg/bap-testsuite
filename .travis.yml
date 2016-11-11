@@ -3,7 +3,6 @@ sudo: false
 script: 
   - bash -ex .travis-opam.sh
   - bash -ex .bap_install.sh
-  - runtest --version
   - make check
 cache:
   directories:
