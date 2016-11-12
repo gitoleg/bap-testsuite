@@ -1,6 +1,6 @@
 # site specific configuration
 
 set bindir "bin"
-#set homedir $env(HOME)
-#set logfile [glob [append homedir /.local/state/bap/log]]
-set logfile [exec mktemp]
+set logpath ~/.local/state/bap/log
+exec touch $logpath
+set logfile [glob $logpath]
