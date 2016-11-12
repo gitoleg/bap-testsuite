@@ -1,6 +1,7 @@
 # site specific configuration
 
 set bindir "bin"
-set logpath ~/.local/state/bap/log
-exec touch $logpath
-set logfile [glob $logpath]
+
+exec bap --help >/dev/null
+
+set logfile [glob ~/.local/state/bap/log]
