@@ -1,4 +1,6 @@
 # site specific configuration
 
 set bindir "bin"
-set logfile [glob ~/.local/state/bap/log]
+set homedir $env(HOME)
+set logfile [glob [append homedir /.local/state/bap/log]]
+
