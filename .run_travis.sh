@@ -13,6 +13,7 @@ cd BinaryAnalysisPlatform/bap
 git fetch origin $BRANCH
 git checkout -qf FETCH_HEAD
 git checkout -b run-travis
+cat plugins/llvm/llvm_binary_34.hpp
 opam pin -yn add bap file://$PWD#run-travis
 opam install bap --deps-only
 opam install bap -v
