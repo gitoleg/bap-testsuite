@@ -15,7 +15,7 @@ git checkout -qf FETCH_HEAD
 git checkout -b run-travis
 opam pin -yn add bap file://$PWD#run-travis
 opam install bap --deps-only
-opan install bap -v
+opam install bap -v
 
 cd ../..
 make check
