@@ -13,7 +13,7 @@ cd BinaryAnalysisPlatform/bap
 git fetch origin $BRANCH
 git checkout -qf FETCH_HEAD
 git checkout -b run-travis
-opam pin add bap git:/$PWD#run-travis
+opam pin -y add bap file://$PWD#run-travis
 
 cd ../..
 make check
