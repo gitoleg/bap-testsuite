@@ -12,10 +12,8 @@ git clone --depth=50 https://github.com/BinaryAnalysisPlatform/bap.git BinaryAna
 cd BinaryAnalysisPlatform/bap
 git fetch origin $BRANCH
 git checkout -qf FETCH_HEAD
-
-./configure "--prefix=/home/travis/.opam/system" --with-cxx=`which clang++` "--mandir=$HOME/.opam/system/man" "--enable-everything" "--enable-tests" "--disable-ida" "--disable-fsi-benchmark" "--disable-objdump" 
-make
-make install
+git checkout -b run-travis
+opam pin add bap git:/$PWD#run-travis
 
 cd ../..
 make check
