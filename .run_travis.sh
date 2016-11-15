@@ -9,5 +9,6 @@ PIN_REPO=$BAP_REPO#$TRAVIS_PULL_REQUEST_BRANCH
 bash -ex .travis-opam.sh
 eval `opam config env`
 env
+git remote -v
 opam pin add bap $BAP_REPO#$TRAVIS_PULL_REQUEST_BRANCH
 make check
