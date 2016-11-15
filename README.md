@@ -2,7 +2,7 @@ BAP Test suite
 ==============
 
 This repository contains tests and test artifacts for Binary Analysis
-Platform. We use DejaGNU testing framework to glue everything in one
+Platform. We use the DejaGNU testing framework to glue everything in one
 piece. The tests are organized around different tools, namely `bap`,
 `mc`, `byteweight` (to be added), and so on.
 
