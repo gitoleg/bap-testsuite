@@ -1,14 +1,20 @@
 #!/bin/sh
 
-REPO=$TRAVIS_REPO_SLUG
-USER=${REPO%/*}
+NUMBER=${TRAVIS_PULL_REQUEST_BRANCH##*#}
+BRANCH=+refs/pull/$NUMBER/merge:
 
-BAP_REPO=git://github.com/$USER/bap
-PIN_REPO=$BAP_REPO#$TRAVIS_PULL_REQUEST_BRANCH
+git clone --depth=50 https://github.com/BinaryAnalysisPlatform/bap.git BinaryAnalysisPlatform/bap
+cd BinaryAnalysisPlatform/bap
+git fetch origin $BRANCH
+git checkout -qf FETCH_HEAD
 
 bash -ex .travis-opam.sh
 eval `opam config env`
-env
-git remote -v
-opam pin add bap $BAP_REPO#$TRAVIS_PULL_REQUEST_BRANCH
+opam install bap --deps-only
+
+./configure "--prefix=/home/travis/.opam/system" --with-cxx=`which clang++` "--mandir=$HOME/.opam/system/man" "--enable-everything" "--enable-tests" "--disable-ida" "--disable-fsi-benchmark" "--disable-objdump" 
+make
+make install
+
+cd ../..
 make check
