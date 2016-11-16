@@ -12,9 +12,9 @@ cd $BAPDIR
 git fetch origin $BRANCH
 git checkout -qf FETCH_HEAD
 git checkout -b run-travis
-opam pin -yn add bap $PWD
-opam install bap --deps-only
-opam install bap -v
+opam pin -y add bap $PWD
+#opam install bap --deps-only
+#opam install bap -v
 
 cd ..
 make check
