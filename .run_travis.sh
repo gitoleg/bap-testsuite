@@ -2,7 +2,6 @@
 
 bash -ex .travis-opam.sh
 eval `opam config env`
-opam install bap --deps-only
 
 BAPDIR=bap-source
 NUMBER=${TRAVIS_PULL_REQUEST_BRANCH##*#}
@@ -13,7 +12,6 @@ cd $BAPDIR
 git fetch origin $BRANCH
 git checkout -qf FETCH_HEAD
 git checkout -b run-travis
-cat plugins/llvm/llvm_binary_34.hpp
 opam pin -yn add bap $PWD
 opam install bap --deps-only
 opam install bap -v
