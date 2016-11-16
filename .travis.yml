@@ -1,6 +1,6 @@
 language: c
 sudo: false
-script: travis_wait bash -ex .run_travis.sh
+script: bash -ex .run_travis.sh
 cache:
   directories:
     - $HOME/.opam
