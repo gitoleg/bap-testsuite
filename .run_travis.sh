@@ -8,6 +8,8 @@ USER=${TRAVIS_REPO_SLUG%/*}
 PR_NUM=${TRAVIS_PULL_REQUEST_BRANCH##*#}
 BRANCH=+refs/pull/$PR_NUM/merge
 
+USER=BinaryAnalysisPlatform
+
 git clone --depth=50 https://github.com/$USER/bap.git $BAPDIR
 cd $BAPDIR
 echo $PWD
