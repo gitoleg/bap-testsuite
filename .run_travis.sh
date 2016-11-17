@@ -10,6 +10,8 @@ BRANCH=+refs/pull/$PR_NUM/merge
 git clone --depth=50 https://github.com/BinaryAnalysisPlatform/bap.git $BAPDIR
 cd $BAPDIR
 echo $PWD
+git fetch origin $BRANCH
+git checkout -qf FETCH_HEAD
 opam pin -yn add bap .
 opam install bap --deps-only
 opam install bap -v
