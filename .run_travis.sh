@@ -16,4 +16,5 @@ opam install bap -v
 
 echo "bap installed!"
 cd ..
+echo $PWD
 make check
