@@ -18,4 +18,7 @@ opam install bap --deps-only
 opam install bap -v
 
 cd ../
+
+bap bin/arm-linux-gnueabihf-echo -d
+
 make check
