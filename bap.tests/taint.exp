@@ -9,7 +9,6 @@ foreach attr $bir_attrs {lappend opts "--print-bir-attr=$attr"}
 proc run-again {file attr} {
     global opts
     global test
-    puts "start to run again to test $attr in $file"
     set command "bap $opts -- $file"
     uplevel 1 spawn $command
     expect {
@@ -20,22 +19,13 @@ proc run-again {file attr} {
 
 
 foreach attr $bir_attrs {
-    set a "false"
-    set f_file ""
-    set f_attr ""
-
     foreach-binary {file *} "bap $opts" {
         ".$attr" {
             pass "$test $attr in $file"
         }
         default  {
-            set a "true"
-            set f_file $file
-            set f_attr $attr
+            run-again $file $attr
             fail "$test $attr in $file"
         }
-    }
-    if {[string compare $a "true"] == 0} {
-        run-again $f_file $f_attr
     }
 }
