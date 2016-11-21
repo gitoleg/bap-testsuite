@@ -22,7 +22,7 @@ bap bin/arm-linux-gnueabihf-echo -d
 
 make check
 
-if [ $? -ne 1 ] ; then
+if [ $? -ne 0 ] ; then
     echo "testrun.log";
     cat testrun.log;
     echo "testrun.sum";
