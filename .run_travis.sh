@@ -18,3 +18,10 @@ opam install bap -v
 
 cd ../
 make check
+
+if [ $? -ne 1 ] ; then
+    echo "testrun.log";
+    cat testrun.log;
+    echo "testrun.sum";
+    cat testrun.sum;
+fi
