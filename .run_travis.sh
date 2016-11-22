@@ -18,8 +18,5 @@ opam install bap -v
 opam list
 
 cd ../
-
-bap bin/arm-linux-gnueabihf-echo -d
-
 make check
 
