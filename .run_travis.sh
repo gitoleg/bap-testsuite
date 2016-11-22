@@ -15,6 +15,7 @@ git checkout -qf FETCH_HEAD
 opam pin -yn add bap .
 opam install bap --deps-only
 opam install bap -v
+opam list
 
 cd ../
 
@@ -22,9 +23,3 @@ bap bin/arm-linux-gnueabihf-echo -d
 
 make check
 
-if [ $? -ne 0 ] ; then
-    echo "testrun.log";
-    cat testrun.log;
-    echo "testrun.sum";
-    cat testrun.sum;
-fi
