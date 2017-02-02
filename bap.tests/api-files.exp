@@ -1,0 +1,47 @@
+set test "api-files"
+
+set api_dir0 [exec mktemp -d]
+set api_dir1 [exec mktemp -d]
+set api_file [exec mktemp]
+set api_path "$api_dir0,$api_dir1"
+
+proc add_cmd {file} {
+    return "--api-add c:$file"
+}
+
+proc rem_cmd {file} {
+    return "--api-rem c:$file"
+}
+
+set test_add [list \
+                  "add_file"        "WARNING"         0 $api_file \
+                  "add_duplicate"   "already exists"  1 $api_file \
+                  "add_not_existed" "does not exists" 1 some_file \
+                  "add_denied"      "permission"      1 $api_file ]
+
+set test_rem [list \
+                  "rem_file"        "WARNING"         0 $api_file \
+                  "rem_not_existed" "does not exists" 1 some_file \
+                  "rem_denied"      "permission"      1 $api_file ]
+
+proc run {what tests} {
+    global test
+    foreach {name expected status file} $tests {
+        spawn bap --api-$what c:$file
+        set cmd_status [lindex [wait] 3]
+        if {$status == $cmd_status} {
+            expect {
+                $expected {pass "$test for $name"}
+                default {fail "no diagnostic/wrong messages in $test for $name"}
+            }
+        } else {fail "unexpected exit status in $test for $name"}
+    }
+}
+
+run add $test_add
+run add $test_rem
+
+exec rm -r $api_dir0
+exec rm -r $api_dir1
+exec rm $api_file
+#todo: clenup bap_api dir
