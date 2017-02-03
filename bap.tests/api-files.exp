@@ -1,57 +1,50 @@
 set test "api-files"
 
-set api_dir0 [exec mktemp -d]
-set api_dir1 [exec mktemp -d]
+set api_path [exec mktemp -d]
 set api_file [exec mktemp]
 
-set test_add [list \
-                  "add file"        "WARNING"            0 $api_file \
-                  "add duplicate"   "Will not overwrite" 1 $api_file \
-                  "add not existed" "Can't find api"     1 some_file ]
+set tests [list \
+                  add "add file"        "WARNING"            0 $api_file \
+                  add "add duplicate"   "Will not overwrite" 1 $api_file \
+                  add "add not existed" "Can't find api"     1 some_file \
+                  rem "remove file"        "WARNING"         0 $api_file \
+                  rem "remove not existed" "Can't find api"  1 some_file ]
 
-set test_rem [list \
-                  "remove file"        "WARNING"         0 $api_file \
-                  "remove not existed" "Can't find api"  1 some_file ]
-
-proc run {what tests} {
+proc base_expect {name api_cmd api_args exp_status expected} {
     global test
-    foreach {name expected status file} $tests {
-        spawn bap --api-$what c:$file
-        set cmd_status [lindex [wait] 3]
-        if {$status == $cmd_status} {
-            expect {
-                $expected {pass "$test for $name"}
-                default {fail "no diagnostic/wrong messages in $test for $name"}
-            }
-        } else {fail "unexpected exit status in $test for $name"}
+    global api_path
+    if {[string length $api_args] != 0} {
+        spawn bap --api-path $api_path --api-$api_cmd $api_args
+    } else { spawn bap --api-path $api_path --api-$api_cmd }
+    set res_status [lindex [wait] 3]
+    if {$exp_status == $res_status} {
+        expect {
+            $expected {pass "$test for $name"}
+            default {fail "no diagnostic/wrong messages in $test for $name"}
+        }
+    } else {fail "unexpected exit status in $test for $name"}
+}
+
+proc run {tests} {
+    global test
+    foreach {api_cmd name expected status api_file} $tests {
+        set api_args "c:$api_file"
+        base_expect $name $api_cmd $api_args $status $expected
     }
 }
 
 proc sanity_test {api_path api_file}  {
-    global test
     set name "sanity check"
     exec -ignorestderr bap --api-add c:$api_file 2>/dev/null
     exec mkdir $api_path/c
     exec cp $api_file $api_path/c
     exec ls $api_path/c
-    spawn bap --api-path $api_path --api-show
-    set cmd_status [lindex [wait] 3]
-    if {$cmd_status != 0} {
-        expect {
-            "Sanitization error" {pass "$test for $name"}
-            default {fail "no diagnostic/wrong messages in $test for $name"}
-        }
-    } else {
-        puts "status is $cmd_status"
-        fail "unexpected exit status in $test for $name"
-    }
+    base_expect $name show "" 1 "Sanitization error"
     exec -ignorestderr bap --api-rem c:$api_file 2>/dev/null
 }
 
-run add $test_add
-run rem $test_rem
-sanity_test $api_dir0 $api_file
+run $tests
+sanity_test $api_path $api_file
 
-exec rm -r $api_dir0
-exec rm -r $api_dir1
+exec rm -r $api_path
 exec rm $api_file
