@@ -3,26 +3,15 @@ set test "api-files"
 set api_dir0 [exec mktemp -d]
 set api_dir1 [exec mktemp -d]
 set api_file [exec mktemp]
-set api_path "$api_dir0,$api_dir1"
-
-proc add_cmd {file} {
-    return "--api-add c:$file"
-}
-
-proc rem_cmd {file} {
-    return "--api-rem c:$file"
-}
 
 set test_add [list \
-                  "add_file"        "WARNING"            0 $api_file \
-                  "add_duplicate"   "Will not overwrite" 1 $api_file \
-                  "add_not_existed" "Can't find api"     1 some_file \
-                  "add_denied"      "permission"         1 $api_file ]
+                  "add file"        "WARNING"            0 $api_file \
+                  "add duplicate"   "Will not overwrite" 1 $api_file \
+                  "add not existed" "Can't find api"     1 some_file ]
 
 set test_rem [list \
-                  "rem_file"        "WARNING"         0 $api_file \
-                  "rem_not_existed" "Can't find api"  1 some_file \
-                  "rem_denied"      "permission"      1 $api_file ]
+                  "remove file"        "WARNING"         0 $api_file \
+                  "remove not existed" "Can't find api"  1 some_file ]
 
 proc run {what tests} {
     global test
@@ -38,8 +27,30 @@ proc run {what tests} {
     }
 }
 
+proc sanity_test {api_path api_file}  {
+    global test
+    set name "sanity check"
+    exec -ignorestderr bap --api-add c:$api_file 2>/dev/null
+    exec mkdir $api_path/c
+    exec cp $api_file $api_path/c
+    exec ls $api_path/c
+    spawn bap --api-path $api_path --api-show
+    set cmd_status [lindex [wait] 3]
+    if {$cmd_status != 0} {
+        expect {
+            "Sanitization error" {pass "$test for $name"}
+            default {fail "no diagnostic/wrong messages in $test for $name"}
+        }
+    } else {
+        puts "status is $cmd_status"
+        fail "unexpected exit status in $test for $name"
+    }
+    exec -ignorestderr bap --api-rem c:$api_file 2>/dev/null
+}
+
 run add $test_add
 run rem $test_rem
+sanity_test $api_dir0 $api_file
 
 exec rm -r $api_dir0
 exec rm -r $api_dir1
