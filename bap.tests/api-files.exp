@@ -14,14 +14,14 @@ proc rem_cmd {file} {
 }
 
 set test_add [list \
-                  "add_file"        "WARNING"         0 $api_file \
-                  "add_duplicate"   "already exists"  1 $api_file \
-                  "add_not_existed" "does not exists" 1 some_file \
-                  "add_denied"      "permission"      1 $api_file ]
+                  "add_file"        "WARNING"            0 $api_file \
+                  "add_duplicate"   "Will not overwrite" 1 $api_file \
+                  "add_not_existed" "Can't find api"     1 some_file \
+                  "add_denied"      "permission"         1 $api_file ]
 
 set test_rem [list \
                   "rem_file"        "WARNING"         0 $api_file \
-                  "rem_not_existed" "does not exists" 1 some_file \
+                  "rem_not_existed" "Can't find api"  1 some_file \
                   "rem_denied"      "permission"      1 $api_file ]
 
 proc run {what tests} {
@@ -39,9 +39,8 @@ proc run {what tests} {
 }
 
 run add $test_add
-run add $test_rem
+run rem $test_rem
 
 exec rm -r $api_dir0
 exec rm -r $api_dir1
 exec rm $api_file
-#todo: clenup bap_api dir
