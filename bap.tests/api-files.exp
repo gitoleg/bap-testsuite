@@ -3,16 +3,15 @@ set test "api-files"
 set api_path [exec mktemp -d]
 set api_file [exec mktemp]
 
-set tests [list \
+set cases [list \
                   add "add file"        "WARNING"            0 $api_file \
                   add "add duplicate"   "Will not overwrite" 1 $api_file \
                   add "add not existed" "Can't find api"     1 some_file \
-                  rem "remove file"        "WARNING"         0 $api_file \
+                  rem "remove file"     "WARNING"            0 $api_file \
                   rem "remove not existed" "Can't find api"  1 some_file ]
 
 proc base_expect {name api_cmd api_args exp_status expected} {
-    global test
-    global api_path
+    global test api_path
     if {[string length $api_args] != 0} {
         spawn bap --api-path $api_path --api-$api_cmd $api_args
     } else { spawn bap --api-path $api_path --api-$api_cmd }
@@ -25,15 +24,16 @@ proc base_expect {name api_cmd api_args exp_status expected} {
     } else {fail "unexpected exit status in $test for $name"}
 }
 
-proc run {tests} {
-    global test
-    foreach {api_cmd name expected status api_file} $tests {
+proc simple_test { } {
+    global test cases
+    foreach {api_cmd name expected status api_file} $cases {
         set api_args "c:$api_file"
         base_expect $name $api_cmd $api_args $status $expected
     }
 }
 
-proc sanity_test {api_path api_file}  {
+proc sanity_test { }  {
+    global api_path api_file
     set name "sanity check"
     exec -ignorestderr bap --api-add c:$api_file 2>/dev/null
     exec mkdir $api_path/c
@@ -43,8 +43,8 @@ proc sanity_test {api_path api_file}  {
     exec -ignorestderr bap --api-rem c:$api_file 2>/dev/null
 }
 
-run $tests
-sanity_test $api_path $api_file
+simple_test
+sanity_test
 
 exec rm -r $api_path
 exec rm $api_file
