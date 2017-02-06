@@ -6,7 +6,7 @@ set api_file [exec mktemp]
 set cases [list \
                   add "add file"        "WARNING"            0 $api_file \
                   add "add duplicate"   "Will not overwrite" 1 $api_file \
-                  add "add not existed" "Can't find api"     1 some_file \
+                  add "add not existed" "can't find api"     1 some_file \
                   rem "remove file"     "WARNING"            0 $api_file \
                   rem "remove not existed" "Can't find api"  1 some_file ]
 
@@ -21,7 +21,7 @@ proc base_expect {name api_cmd api_args exp_status expected} {
             $expected {pass "$test for $name"}
             default {fail "no diagnostic/wrong messages in $test for $name"}
         }
-    } else {fail "unexpected exit status in $test for $name"}
+    } else {fail "unexpected exit status in $test for $name: $res_status"}
 }
 
 proc simple_test { } {
