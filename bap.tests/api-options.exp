@@ -1,4 +1,4 @@
-set test "api-files"
+set test "api-options"
 
 set api_path [exec mktemp -d]
 set api_file [exec mktemp]
