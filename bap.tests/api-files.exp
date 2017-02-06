@@ -43,8 +43,22 @@ proc sanity_test { }  {
     exec -ignorestderr bap --api-rem c:$api_file 2>/dev/null
 }
 
+proc show_api_test {} {
+    base_expect "show-api test" show "" 0 "Total number of available API: 2"
+}
+
+proc list_paths_test {} {
+    global api_path
+    set default_path [exec bap --api-list-paths]
+    base_expect "list-paths:default" list-paths "" 0 $default_path
+    base_expect "list-paths:added path" list-paths "" 0 $api_path
+}
+
+
 simple_test
 sanity_test
+show_api_test
+list_paths_test
 
 exec rm -r $api_path
 exec rm $api_file
