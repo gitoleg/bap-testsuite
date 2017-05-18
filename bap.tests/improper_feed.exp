@@ -9,21 +9,29 @@ proc touch {data} {
 }
 
 set files {
-  "empty file"    "Unexpected EOF" ""
-  "random data"   "Bad file format" "Hello, world"
-  "truncated elf" "Bad file format" "\x7f\x45\x4c\x46\x02\x01\x01"
+    "empty file"    ""
+    "random data"   "Hello, world"
+    "truncated elf" "\x7f\x45\x4c\x46\x02\x01\x01"
 }
 
-foreach {msg expected data} $files {
+set expected "input file format is not supported by the specified loader"
+
+foreach {msg data} $files {
     set file [touch $data]
     spawn bap $file -d
-    set status [lindex [wait] 3]    
-    if {$status != 0} {
-        expect {
-            $expected {pass "$test for $msg"}
-            default {fail "no diagnostic/wrong messages in $test for $msg"}
+    expect {
+        $expected  {
+            # it's a wild trick to replace set status [lindex [wait] 3]
+            # because for some reasons test suspends forever on OsX in
+            # this case
+            set status [catch {exec bap $file -d} output]
+            if {[string equal $status "0"]} {
+                fail "unexpected zero exit status in $test for $msg"
+            } else {
+                pass "$test for $msg"
+            }
         }
-    } else {fail "unexpected zero exit status in $test for $msg"}
+        default {fail "no diagnostic/wrong messages in $test for $msg"}
+    }
     exec rm $file
 }
-
