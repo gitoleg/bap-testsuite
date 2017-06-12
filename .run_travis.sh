@@ -8,7 +8,7 @@ USER=${TRAVIS_REPO_SLUG%/*}
 PR_NUM=${TRAVIS_PULL_REQUEST_BRANCH##*#}
 BRANCH=+refs/pull/$PR_NUM/merge
 
-git clone --depth=50 https://github.com/gitoleg/bap.git $BAPDIR
+git clone https://github.com/gitoleg/bap.git $BAPDIR
 #git clone --depth=50 https://github.com/$USER/bap.git $BAPDIR
 cd $BAPDIR
 
@@ -16,9 +16,10 @@ cd $BAPDIR
 #  git checkout -qf FETCH_HEAD) ||
 #     git fetch origin master
 
-git fetch origin ogre-loader-job
-git checkout -b my_branch origin/ogre-loader-job
+#git fetch origin ogre-loader-job
+git checkout ogre-loader-job
 git status
+
 opam pin -yn add bap .
 opam install bap --deps-only
 opam install bap -v
