@@ -17,7 +17,7 @@ cd $BAPDIR
 #     git fetch origin master
 
 git fetch origin ogre-loader-job
-git checkout ogre-loader-job
+git checkout origin/ogre-loader-job
 git status
 opam pin -yn add bap .
 opam install bap --deps-only
