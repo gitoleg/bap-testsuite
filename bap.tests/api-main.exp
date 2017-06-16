@@ -46,6 +46,7 @@ foreach {target lines} $testsuite {
     if { $target == "i686-w64-mingw32" } {
         set x [exec bap "$file" -dsymbols]
         puts $x
+        puts [exec cat "my.ogre"]
     }
 
     foreach line $lines {
