@@ -42,6 +42,12 @@ set testsuite {
 
 foreach {target lines} $testsuite {
     set file "$bindir/$target-echo"
+
+    if { $target == "i686-w64-mingw32" } {
+        set x [exec bap "$file" -d]
+        puts $x
+    }
+
     foreach line $lines {
         spawn bap "$file" -d
         expect {
