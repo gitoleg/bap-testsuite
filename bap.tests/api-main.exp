@@ -44,7 +44,7 @@ foreach {target lines} $testsuite {
     set file "$bindir/$target-echo"
 
     if { $target == "i686-w64-mingw32" } {
-        set x [exec bap "$file" -d]
+        set x [exec bap "$file" -dsymbols]
         puts $x
     }
 
