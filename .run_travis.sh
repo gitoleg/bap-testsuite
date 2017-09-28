@@ -3,6 +3,10 @@
 bash -ex .travis-opam.sh
 eval `opam config env`
 
+
+echo "TRAVIS_PULL_REQUEST_BRANCH is $TRAVIS_PULL_REQUEST_BRANCH"
+echo "TRAVIS_BRANCH is $TRAVIS_BRANCH"
+
 BAPDIR=bap-source
 USER=${TRAVIS_REPO_SLUG%/*}
 PR_NUM=${TRAVIS_PULL_REQUEST_BRANCH##*#}
