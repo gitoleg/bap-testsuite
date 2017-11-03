@@ -21,10 +21,10 @@ opam install conf-bap-llvm
 cd ../
 
 if [ "$BAP_RUN_VERI" = "true" ]; then
-    opam install bap --deps-only
+    opam install bap bap-veri bap-frames --deps-only
     opam repo add testing git://github.com/BinaryAnalysisPlatform/opam-repository#testing
     opam update
-    opam install -v bap bap-frames bap-veri
+    opam install -v -y bap bap-frames bap-veri
     make veri
 else
     opam install bap --deps-only
