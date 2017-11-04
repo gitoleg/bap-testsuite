@@ -17,17 +17,13 @@ cd $BAPDIR
 
 opam pin -yn add bap .
 opam install conf-bap-llvm
+opam install bap --deps-only
+opam install bap -v
 
 cd ../
 
 if [ "$BAP_RUN_VERI" = "true" ]; then
-    opam install bap bap-veri bap-frames --deps-only
-    opam repo add testing git://github.com/BinaryAnalysisPlatform/opam-repository#testing
-    opam update
-    opam install -v -y bap bap-frames bap-veri
     make veri
 else
-    opam install bap --deps-only
-    opam install bap -v
     make check
 fi

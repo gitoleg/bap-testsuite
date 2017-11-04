@@ -20,13 +20,16 @@ proc is_match {insn patterns} {
     return $r
 }
 
+set bapveri "veri/bap-veri"
+
+
 foreach {trace} $traces {
     set file "$tracesdir/$trace"
     set insn [file rootname [file tail $trace]]
     if [is_match $insn $skipped] {
         puts "SKIP test for $insn"
     } else {
-        spawn bap-veri $file --rules $rules
+        spawn $bapveri $file --rules $rules
         expect {
             "successed   | 100.00% " {pass "$test for $insn"}
             default {
