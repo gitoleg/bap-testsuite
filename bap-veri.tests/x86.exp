@@ -40,3 +40,7 @@ foreach {trace} $traces {
         }
     }
 }
+
+
+set x [exec cat bap-veri.log]
+puts $x
