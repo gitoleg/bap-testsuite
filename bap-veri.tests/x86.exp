@@ -20,7 +20,7 @@ proc is_match {insn patterns} {
     return $r
 }
 
-set bapveri "veri/bap-veri"
+# set bapveri "veri/bap-veri"
 
 
 foreach {trace} $traces {
