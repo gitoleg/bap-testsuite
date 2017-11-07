@@ -39,5 +39,5 @@ env:
   global:
   - FORK_USER=talex5 FORK_BRANCH=containers OPAMYES=true OCAML_VERSION=latest TESTS=false
   matrix:
-  BAP_RUN_VERI=false
-  BAP_RUN_VERI=true
+  - BAP_RUN_VERI=false
+  - BAP_RUN_VERI=true
