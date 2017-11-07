@@ -37,7 +37,7 @@ addons:
 
 env:
   global:
-  - FORK_USER=talex5 FORK_BRANCH=containers OPAMYES=true OCAML_VERSION=latest TESTS=false
+  - FORK_USER=talex5 FORK_BRANCH=containers OPAMYES=true OCAML_VERSION=4.05.0 TESTS=false
   matrix:
   - BAP_RUN_VERI=false
   - BAP_RUN_VERI=true
