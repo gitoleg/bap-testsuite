@@ -22,11 +22,10 @@ opam install bap -v
 
 cd ../
 
-# TODO add a BAP/bap-veri repository BinaryAnalysisPlatform
 if [ "$BAP_RUN_VERI" = "true" ]; then
-    git clone https://github.com/gitoleg/bap-veri
+    git clone https://github.com/BinaryAnalysisPlatform/bap-veri
     opam pin add bap-veri bap-veri/ -n
-    opam install -v -y bap-veri
+    opam install -y bap-veri
     make veri
 else
     make check
