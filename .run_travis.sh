@@ -34,3 +34,11 @@ fi
 if [ "$BAPTEST_RUN_CHECK" = "true"  ]; then
     make check
 fi
+
+if [ "$BAPTEST_RUN_MC" = "true"  ]; then
+    make mc
+fi
+
+if [ "$BAPTEST_RUN_PRIMUS" = "true"  ]; then
+    make primus
+fi
