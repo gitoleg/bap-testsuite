@@ -1,3 +1,4 @@
+
 set test "version"
 spawn bap --version
 expect {

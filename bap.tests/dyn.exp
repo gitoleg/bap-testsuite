@@ -10,17 +10,6 @@ set cases {
 
 foreach {file sym caller} $cases {
     set file "$dyn_dir/$file"
-    spawn bap $file -d --print-symbol=$sym
-    expect {
-        "sub $sym" {close; wait; pass "$test test for sub $sym in $file"}
-        default {wait; fail "$test test: no sub $sym in $file"}
-    }
-
-    if {[string length $caller] != 0} {
-        spawn bap $file -d --print-symbol=$caller
-        expect {
-            "call @$sym" {close; wait; pass "$test test for call @$sym in $file"}
-            default {wait; fail "$test test: no call of @$sym in $file"}
-        }
-    }
+    find_string $file "sub $sym" $test bir "--print-symbol=$sym"
+    find_string $file "call @$sym" $test bir "--print-symbol=$caller"
 }

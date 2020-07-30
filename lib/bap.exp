@@ -39,7 +39,7 @@ proc assert-zero {result file test} {
 }
 
 proc collect-matching {file pattern} {
-    set fd [open "$file.bir"]
+    set fd [open "$file.out"]
     set output [read $fd]
     close $fd
     return [regexp -inline -all -- $pattern $output]
@@ -60,7 +60,7 @@ proc zero-matches {file pattern test} {
 
 proc with-exit-code {name opts expected expected_status} {
     set status 0
-    if {[catch {uplevel 0 exec bap $opts >& output.bir} results options]} {
+    if {[catch {uplevel 0 exec bap $opts >& output.out} results options]} {
         set details [dict get $options -errorcode]
         if {[lindex $details 0] eq "CHILDSTATUS"} {
             set status [lindex $details 2]
@@ -75,7 +75,7 @@ proc with-exit-code {name opts expected expected_status} {
         fail "got a wrong exit status for the $name"
     }
     non-zero-matches output "$expected.*" "got the right message for the $name"
-    exec rm -f output.bir
+    exec rm -f output.out
 }
 
 
@@ -89,4 +89,72 @@ proc foreach-binary {nampat command expectations} {
         uplevel 1 spawn $command "--" "$file"
         uplevel 1 expect [list $expectations]
     }
+}
+
+
+#escape all non-word characters
+#the & will be substituted by whatever was matched in the expression
+proc escape {str} {
+    regsub -all {\W} $str {\\&}
+}
+
+
+proc new_match {file format extra_opts expectations} {
+    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
+    set opts [join $opts " "]
+    eval exec bap $file $opts
+    set matched false
+    foreach {pat act} $expectations {
+        if {$pat == "default"} {
+            continue
+        } else {
+            set got [collect-matching $file $pat]
+            set matches [llength $got]
+            if { $matches != 0} {
+                set matched true
+                uplevel 1 $act
+            }
+        }
+    }
+    if {$matched == false} {
+        foreach {pat act} $expectations {
+            if {$pat == "default"} {
+                uplevel 1 $act
+            }
+        }
+    }
+    exec rm "$file.out"
+}
+
+proc base_match {file patterns test format extra_opts escaped } {
+    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
+    set opts [join $opts " "]
+    eval exec bap $file $opts
+    foreach pat $patterns {
+        if {$escaped == "true"} {
+            set line [escape $pat]
+        } else {
+            set line $pat
+        }
+        non-zero-matches $file $line "$test for $pat"
+    }
+   exec rm "$file.out"
+}
+
+# `match {file patternS testname format extra-options}
+# runs bap and dumps output in the specified format. Then
+# for each pattern from the LIST of patterns match the output
+# with this pattern.
+proc match {file patterns test {format "bir" } {extra_opts ""} } {
+    base_match $file $patterns $test $format $extra_opts "false"
+}
+
+proc find_string {file string test {format "bir" } {extra_opts ""} } {
+    base_match $file [subst { $string }] $test $format $extra_opts "true"
+}
+
+# find_strings {file strings testname format extra-options} - the same
+# as match above, but search for the exact strings.
+proc find_strings {file strings test {format "bir" } {extra_opts ""} } {
+    base_match $file $strings $test $format $extra_opts "true"
 }
