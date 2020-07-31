@@ -8,20 +8,25 @@ proc escape {str} {
     regsub -all {\W} $str {\\&}
 }
 
+proc string-matched {str pattern} {
+    return [regexp -inline -all -- $pattern $str]
+}
+
 proc collect-matching {file pattern} {
     set fd [open "$file.out"]
     set output [read $fd]
     set len [string length output]
     close $fd
-    return [regexp -inline -all -- $pattern $output]
+    return [string-matched $output $pattern]
 }
 
-proc base_match { cmd file opts expectations callee_level} {
+
+proc base_match { cmd file opts expectations callee_level } {
     set level [expr [info level] - $callee_level]
     if { $file == "stdout"} {
-        eval exec $cmd $opts > $file.out
+        catch {eval exec $cmd $opts >& $file.out} results options
     } else {
-        eval exec $cmd $opts
+        catch {eval exec $cmd $opts}
     }
     set matched false
     foreach {pat act} $expectations {
@@ -38,12 +43,12 @@ proc base_match { cmd file opts expectations callee_level} {
             }
         }
     }
-    if {$matched == false} {
+    if {$matched == false || $continue_matching != false} {
         foreach {pat act} $expectations {
             if {$pat == "default"} {
                 uplevel $level $act
             }
         }
     }
- #  exec rm "$file.out"
+    exec rm "$file.out"
 }

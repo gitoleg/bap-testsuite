@@ -84,12 +84,15 @@ proc foreach-binary {nampat command expectations} {
     }
 }
 
-
-
-proc match { file format extra_opts expectations } {
-    set opts [subst { "$file" "--dump=$format:$file.out" "$extra_opts" } ]
+proc match { file output extra_opts expectations } {
+    set opts [subst { "$file" "$extra_opts" } ]
+    if {$output != "stdout" } {
+        lappend opts "--dump=$format:$file.out"
+    } else {
+        set file $output
+    }
     set opts [join $opts " "]
-     set level [expr [info level] - 1]
+    set level [expr [info level] - 1]
     base_match bap $file $opts $expectations $level
 }
 

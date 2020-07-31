@@ -2,7 +2,7 @@
 load_lib common.exp
 
 proc match { code opts expectations } {
-    set opts [concat $opts $code]
+    set opts [concat $opts [escape $code] ]
     set level [expr [info level] - 1]
     base_match bap-mc stdout $opts $expectations $level
 }
