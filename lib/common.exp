@@ -1,2 +1,49 @@
 # A library of common utilities used across
 # different tool tests
+
+
+#escape all non-word characters
+#the & will be substituted by whatever was matched in the expression
+proc escape {str} {
+    regsub -all {\W} $str {\\&}
+}
+
+proc collect-matching {file pattern} {
+    set fd [open "$file.out"]
+    set output [read $fd]
+    set len [string length output]
+    close $fd
+    return [regexp -inline -all -- $pattern $output]
+}
+
+proc base_match { cmd file opts expectations callee_level} {
+    set level [expr [info level] - $callee_level]
+    if { $file == "stdout"} {
+        eval exec $cmd $opts > $file.out
+    } else {
+        eval exec $cmd $opts
+    }
+    set matched false
+    foreach {pat act} $expectations {
+        set pat [join [uplevel $level list $pat]]
+        if {$pat == "default"} {
+            continue
+        } else {
+            set got [collect-matching $file $pat]
+            set matches [llength $got]
+            if { $matches != 0} {
+                set matched true
+                uplevel $level $act
+                break
+            }
+        }
+    }
+    if {$matched == false} {
+        foreach {pat act} $expectations {
+            if {$pat == "default"} {
+                uplevel $level $act
+            }
+        }
+    }
+ #  exec rm "$file.out"
+}

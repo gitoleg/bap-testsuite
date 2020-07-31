@@ -38,14 +38,6 @@ proc assert-zero {result file test} {
     }
 }
 
-proc collect-matching {file pattern} {
-    set fd [open "$file.out"]
-    set output [read $fd]
-    set len [string length output]
-    close $fd
-    return [regexp -inline -all -- $pattern $output]
-}
-
 
 proc non-zero-matches {file pattern test} {
     set got [collect-matching $file $pattern]
@@ -93,39 +85,12 @@ proc foreach-binary {nampat command expectations} {
 }
 
 
-#escape all non-word characters
-#the & will be substituted by whatever was matched in the expression
-proc escape {str} {
-    regsub -all {\W} $str {\\&}
-}
 
 proc match { file format extra_opts expectations } {
-    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
+    set opts [subst { "$file" "--dump=$format:$file.out" "$extra_opts" } ]
     set opts [join $opts " "]
-    eval exec bap $file $opts
-    set matched false
-    foreach {pat act} $expectations {
-        set pat [uplevel 1 list $pat]
-        if {$pat == "default"} {
-            continue
-        } else {
-            set got [collect-matching $file $pat]
-            set matches [llength $got]
-            if { $matches != 0} {
-                set matched true
-                uplevel 1 $act
-                break
-            }
-        }
-    }
-    if {$matched == false} {
-        foreach {pat act} $expectations {
-            if {$pat == "default"} {
-                uplevel 1 $act
-            }
-        }
-    }
-   exec rm "$file.out"
+     set level [expr [info level] - 1]
+    base_match bap $file $opts $expectations $level
 }
 
 
