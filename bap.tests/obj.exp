@@ -30,5 +30,5 @@ proc expected_of_file {file subs prefixes} {
 foreach {file} [exec ls $obj_dir] {
     set file "$obj_dir/$file"
     set expected [expected_of_file $file $subs $prefixes]
-    match $file $expected $test
+    find_all $file bir $expected [concat $test $file]
 }

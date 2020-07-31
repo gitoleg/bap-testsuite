@@ -6,4 +6,4 @@ set secs {
     "Disassembly of section .text"
 }
 
-find_strings "$bindir/x86_64-linux-gnu-echo" $secs $test asm
+find_all "$bindir/x86_64-linux-gnu-echo" asm $secs $test

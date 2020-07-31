@@ -17,5 +17,5 @@ set cases {
 }
 
 foreach {file strs} $cases {
-    find_strings $file $strs $test bir "--no-byteweight"
+    find_all $file bir $strs $test "--no-byteweight"
 }

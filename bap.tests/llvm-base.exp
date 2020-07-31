@@ -48,7 +48,10 @@ foreach {target symbols} $testsuite {
             set addr [format %x [expr "0x$addr0" + $base ]]
             set opts [subst {--loader=llvm --llvm-base=$base}]
             set opts [concat $opts [join $print_opts " "]]
-            match $file [subst {"$name $addr"}] $test symbols $opts
+            match $file symbols $opts {
+                "$name $addr" {pass "$test for $name $addr"}
+                default {fail "$test for $name $addr"}
+            }
         }
     }
 }

@@ -3,35 +3,6 @@ set test "config"
 set file "$bindir/x86-linux-gnu-echo"
 
 set etc [exec opam config var etc]
-
-proc match {file format extra_opts expectations} {
-    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
-    set opts [join $opts " "]
-    eval exec bap $file $opts
-    set matched false
-    foreach {pat act} $expectations {
-        if {$pat == "default"} {
-            continue
-        } else {
-            set got [collect-matching $file $pat]
-            set matches [llength $got]
-            if { $matches != 0} {
-                set matched true
-                uplevel 1 $act
-            }
-        }
-    }
-    if {$matched == false} {
-        foreach {pat act} $expectations {
-            if {$pat == "default"} {
-                uplevel 1 $act
-            }
-        }
-    }
-    exec rm "$file.out"
-}
-
-
 set confdir "$etc/bap"
 set conf_file $confdir/config
 
@@ -64,7 +35,7 @@ match $file bir "" {
 match $file bir "--print-symbol=main" {
     "sub print_strings" { fail "$test: print_strings is unexpected" }
     "sub main"   { pass "$test for overriding parameters in conf file" }
-    default { "no output or wrong one is for $test" }
+    default { fail "no output or wrong one is for $test" }
 }
 
 exec rm $conf_file

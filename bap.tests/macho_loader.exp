@@ -9,5 +9,8 @@ set cases {
 }
 
 foreach {file expected} $cases {
-    find_string $file $expected $test ogre
+    match $file ogre "" {
+        $expected {pass "$test for $file"}
+        default {fail "$test for $file"}
+    }
 }

@@ -40,5 +40,5 @@ set print_opts {
 foreach {target symbols} $testsuite {
     set file "$bindir/$target-echo"
     set opts [join $print_opts " "]
-    find_strings $file $symbols $test symbols $opts
+    find_all $file symbols $symbols $test $opts
 }

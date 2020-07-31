@@ -1,15 +1,22 @@
 set test "dynamic-libraries"
-
 set dyn_dir "dyn"
 
 set cases {
+    "x86_64-elf_so" "foo" "bar"
     "x86-coff-libvlc_dll" "libvlc_printerr" "libvlc_add_intf"
     "x86_64-macho_dylib" "_printf" "_my_print"
-    "x86_64-elf_so" "foo" "bar"
 }
 
 foreach {file sym caller} $cases {
     set file "$dyn_dir/$file"
-    find_string $file "sub $sym" $test bir "--print-symbol=$sym"
-    find_string $file "call @$sym" $test bir "--print-symbol=$caller"
+
+    match $file bir "--print-symbol=$sym" {
+        "sub $sym" {pass "$test for $sym"}
+        default    {fail "$test for $sym"}
+    }
+
+    match $file bir "--print-symbol=$caller" {
+        "call @$sym" {pass "$test for call $sym"}
+        default    {fail "$test for call $sym"}
+    }
 }

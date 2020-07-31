@@ -41,6 +41,7 @@ proc assert-zero {result file test} {
 proc collect-matching {file pattern} {
     set fd [open "$file.out"]
     set output [read $fd]
+    set len [string length output]
     close $fd
     return [regexp -inline -all -- $pattern $output]
 }
@@ -98,13 +99,13 @@ proc escape {str} {
     regsub -all {\W} $str {\\&}
 }
 
-
-proc new_match {file format extra_opts expectations} {
+proc match { file format extra_opts expectations } {
     set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
     set opts [join $opts " "]
     eval exec bap $file $opts
     set matched false
     foreach {pat act} $expectations {
+        set pat [uplevel 1 list $pat]
         if {$pat == "default"} {
             continue
         } else {
@@ -113,6 +114,7 @@ proc new_match {file format extra_opts expectations} {
             if { $matches != 0} {
                 set matched true
                 uplevel 1 $act
+                break
             }
         }
     }
@@ -123,38 +125,25 @@ proc new_match {file format extra_opts expectations} {
             }
         }
     }
-    exec rm "$file.out"
-}
-
-proc base_match {file patterns test format extra_opts escaped } {
-    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
-    set opts [join $opts " "]
-    eval exec bap $file $opts
-    foreach pat $patterns {
-        if {$escaped == "true"} {
-            set line [escape $pat]
-        } else {
-            set line $pat
-        }
-        non-zero-matches $file $line "$test for $pat"
-    }
    exec rm "$file.out"
 }
 
-# `match {file patternS testname format extra-options}
-# runs bap and dumps output in the specified format. Then
-# for each pattern from the LIST of patterns match the output
-# with this pattern.
-proc match {file patterns test {format "bir" } {extra_opts ""} } {
-    base_match $file $patterns $test $format $extra_opts "false"
-}
 
-proc find_string {file string test {format "bir" } {extra_opts ""} } {
-    base_match $file [subst { $string }] $test $format $extra_opts "true"
-}
-
-# find_strings {file strings testname format extra-options} - the same
-# as match above, but search for the exact strings.
-proc find_strings {file strings test {format "bir" } {extra_opts ""} } {
-    base_match $file $strings $test $format $extra_opts "true"
+proc find_all {file format patterns test { extra_opts ""} } {
+    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
+    set opts [join $opts " "]
+    eval exec bap $file $opts
+    set passed {}
+    set failed {}
+    foreach pat $patterns {
+        set got [collect-matching $file [escape $pat]]
+        if { [llength $got] != 0} {
+            lappend passed $pat
+        } else {
+            lappend failed $pat
+        }
+    }
+    foreach p $passed { pass "$test for $p" }
+    foreach p $failed { fail "$test for $p" }
+    exec rm "$file.out"
 }
