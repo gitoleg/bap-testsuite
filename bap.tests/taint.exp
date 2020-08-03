@@ -43,7 +43,7 @@ foreach system $systems {
         } else {
             zero-matches $file {\.dead} "no-dead-code"
         }
-        exec rm -f "$file.bir"
+        exec rm -f "$file.out"
         exec rm -f stdout
     }
 }

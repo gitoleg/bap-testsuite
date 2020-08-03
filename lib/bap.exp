@@ -84,10 +84,14 @@ proc foreach-binary {nampat command expectations} {
     }
 }
 
+# `match file output opts expectations` matches
+# the result of command `bap file opts` with the list
+# of expectations. The `output` parameter sets the
+# bap output format.
 proc match { file output extra_opts expectations } {
     set opts [subst { "$file" "$extra_opts" } ]
     if {$output != "stdout" } {
-        lappend opts "--dump=$format:$file.out"
+        lappend opts "--dump=$output:$file.out"
     } else {
         set file $output
     }
@@ -97,8 +101,8 @@ proc match { file output extra_opts expectations } {
 }
 
 
-proc find_all {file format patterns test { extra_opts ""} } {
-    set opts [subst { "--dump=$format:$file.out" "$extra_opts" } ]
+proc find_all {file output patterns test { extra_opts ""} } {
+    set opts [subst { "--dump=$output:$file.out" "$extra_opts" } ]
     set opts [join $opts " "]
     eval exec bap $file $opts
     set passed {}

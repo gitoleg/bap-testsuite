@@ -8,3 +8,5 @@ non-zero-matches result "the same callgraph" "base is equal to base"
 eval exec bap compare $collator $base [glob bin/*-echo] --callgraph-collator-output=result.out
 non-zero-matches result "is not different" "base is in the set"
 non-zero-matches result "Found 9 versions that are different" "all other are different"
+
+exec rm -f "result.out"

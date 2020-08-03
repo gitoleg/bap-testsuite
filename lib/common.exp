@@ -43,7 +43,7 @@ proc base_match { cmd file opts expectations callee_level } {
             }
         }
     }
-    if {$matched == false || $continue_matching != false} {
+    if {$matched == false} {
         foreach {pat act} $expectations {
             if {$pat == "default"} {
                 uplevel $level $act
