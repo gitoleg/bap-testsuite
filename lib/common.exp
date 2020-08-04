@@ -1,13 +1,6 @@
 # A library of common utilities used across
 # different tool tests
 
-
-#escape all non-word characters
-#the & will be substituted by whatever was matched in the expression
-proc escape {str} {
-    regsub -all {\W} $str {\\&}
-}
-
 proc string-matched {str pattern} {
     return [regexp -inline -all -- $pattern $str]
 }
@@ -24,7 +17,7 @@ proc collect-matching {file pattern} {
 proc base_match { cmd file opts expectations callee_level } {
     set level [expr [info level] - $callee_level]
     if { $file == "stdout"} {
-        catch {eval exec $cmd $opts >& $file.out} results options
+        catch {eval exec $cmd $opts >& $file.out}
     } else {
         catch {eval exec $cmd $opts}
     }

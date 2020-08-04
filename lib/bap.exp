@@ -86,8 +86,9 @@ proc foreach-binary {nampat command expectations} {
 
 # `match file output opts expectations` matches
 # the result of command `bap file opts` with the list
-# of expectations. The `output` parameter sets the
-# bap output format.
+# of expectations. The `output` parameter defines what
+# to match against the expectations, e.g. bir, symbols,
+# just stdout
 proc match { file output extra_opts expectations } {
     set opts [subst { "$file" "$extra_opts" } ]
     if {$output != "stdout" } {
@@ -100,6 +101,11 @@ proc match { file output extra_opts expectations } {
     base_match bap $file $opts $expectations $level
 }
 
+#escape all non-word characters
+#the & will be substituted by whatever was matched in the expression
+proc escape {str} {
+    regsub -all {\W} $str {\\&}
+}
 
 proc find_all {file output patterns test { extra_opts ""} } {
     set opts [subst { "--dump=$output:$file.out" "$extra_opts" } ]

@@ -39,6 +39,7 @@ foreach system $systems {
         non-zero-matches $file {\.tainted-regs} "propagate in $system"
         non-zero-matches $file {\.visited} "visited in $system"
         if { [regexp "android|mips|w64-mingw" $file]} {
+            exec rm -f "$file.out"
             continue
         } else {
             zero-matches $file {\.dead} "no-dead-code"
