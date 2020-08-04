@@ -18,10 +18,10 @@ set opts {
     --pass=run
 }
 
-spawn bap sse/floats [join $opts " "]
+eval spawn bap sse/floats [join $opts " "]
 
 expect {
-    "PASS{$expected_passes}" {incr passes; exp_continue}
+    "PASS" {incr passes; exp_continue}
     default {
         wait;
         if { $passes == $expected_passes } {

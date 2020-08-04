@@ -54,7 +54,7 @@ foreach bin $bins {
         lappend full_opts "--run-system=$system"
         lappend full_opts "--read-symbols-from data/$bin.symbols"
 
-        match "bin/$bin" stdout [join $full_opts " "] {
+        match "bin/$bin" "" [join $full_opts " "] {
             "ill-typed" { fail "program is ill-typed" }
             "$output" { pass "$test $system $bin outputs everything" }
             default { fail "got incomplete output from $bin with $system"}

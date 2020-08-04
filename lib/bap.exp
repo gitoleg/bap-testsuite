@@ -84,44 +84,47 @@ proc foreach-binary {nampat command expectations} {
     }
 }
 
-# `match file output opts expectations` matches
+# `match file format opts expectations` matches
 # the result of command `bap file opts` with the list
-# of expectations. The `output` parameter defines what
-# to match against the expectations, e.g. bir, symbols,
-# just stdout
-proc match { file output extra_opts expectations } {
+# of expectations. The `format` parameter specifies the
+# format of output, e.g. bir, asm, symbols, ogre.
+proc match { file {format ""} extra_opts expectations } {
     set opts [subst { "$file" "$extra_opts" } ]
-    if {$output != "stdout" } {
-        lappend opts "--dump=$output:$file.out"
-    } else {
-        set file $output
+    if { $format != "" } {
+        lappend opts "--dump=$format"
     }
     set opts [join $opts " "]
     set level [expr [info level] - 1]
-    base_match bap $file $opts $expectations $level
+    match_output bap $opts $expectations $level
 }
 
-#escape all non-word characters
-#the & will be substituted by whatever was matched in the expression
-proc escape {str} {
-    regsub -all {\W} $str {\\&}
-}
-
-proc find_all {file output patterns test { extra_opts ""} } {
-    set opts [subst { "--dump=$output:$file.out" "$extra_opts" } ]
+# `find_all file output strings name opts` ensures that all the
+#strings can be found in the result of  `bap file opts` command.
+# The `output` parameter defines what to match against the expectations,
+# e.g. bir, asm, symbols, ogre
+proc find_all {filename format strings test { extra_opts ""} } {
+    if { $format != "" } {
+        lappend extra_opts "--dump=$format:$filename.out"
+    }
+    set opts [subst $extra_opts]
     set opts [join $opts " "]
-    eval exec bap $file $opts
+    exec echo exec bap $filename $opts >> bap.log
+    catch {eval exec bap $filename $opts >& $filename.out}
+    if { [file exists $filename.out] == 1 } {
+        exec cat $filename.out >> bap.log
+    }
+
     set passed {}
     set failed {}
-    foreach pat $patterns {
-        set got [collect-matching $file [escape $pat]]
+    foreach str $strings {
+        set got [collect-matching $filename [escape $str]]
         if { [llength $got] != 0} {
-            lappend passed $pat
+            lappend passed $str
         } else {
-            lappend failed $pat
+            lappend failed $str
         }
     }
     foreach p $passed { pass "$test for $p" }
     foreach p $failed { fail "$test for $p" }
-    exec rm "$file.out"
+    exec rm -f "$filename.out"
 }
