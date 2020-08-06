@@ -1,6 +1,6 @@
 set test "version"
 
-match "" "--version" {
+match_output "bap-mc" "--version" {
     "1" {pass $test}
     "2" {pass $test}
     default {wait; fail $test}
