@@ -20,7 +20,6 @@ proc escape {str} {
     regsub -all {\W} $str {\\&}
 }
 
-
 # `match_output cmd opts expectations level` matches the output
 # of the provided command (both stderr and stdout) called with the
 # options `opts`. The `expectations` is a list of patterns
@@ -38,7 +37,7 @@ proc match_output { cmd opts expectations {provided_level ""} } {
     }
     set level [expr [info level] - $callee_level]
     set result "$cmd-result"
-    exec echo exec $cmd $filename $opts >> $cmd.log
+    exec echo exec $cmd $result $opts >> $cmd.log
     catch {eval exec $cmd $opts >& $result.out}
     if { [file exists $result.out] == 1 } {
         exec cat $result.out >> $cmd.log
